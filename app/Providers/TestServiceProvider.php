@@ -31,30 +31,34 @@ class TestServiceProvider extends ServiceProvider
     public function register()
     {
 
+    // instance
     $test = new Test();
     $test->name="this is instance";
     
     $this->app->instance('instance',$test);
 
-    // $this->app->when('App\library\services\BindingPrimitive')->needs('$integer')->give(.1);
-
+    // singleton
     $this->app->singleton('singleton',function(){
          $singleton = new Test();
          $singleton->name='singleton';
          return $singleton;
     });
 
+    // bind
     $this->app->bind('bind',function(){
         $bind = new Test();
         $bind->name='bind';
         return $bind;
     });
 
+    // Binding Interfaces To Implementations
     $this->app->bind(Vehicle::class,Car::class);
 
-    // $this->app->when(CarController::class)->needs(Vehicle::class)->give(Car::class);
-    // $this->app->when(BicycleController::class)->needs(Vehicle::class)->give(Bicycle::class);
+    // Contextual Binding
+    $this->app->when(CarController::class)->needs(Vehicle::class)->give(Car::class);
+    $this->app->when(BicycleController::class)->needs(Vehicle::class)->give(Bicycle::class);
 
+    // Tagging
     $this->app->tag(['singleton', 'bind'], 'binding');
 
     $this->app->bind('tagged',function($app){
